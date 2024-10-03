@@ -1,101 +1,137 @@
+"use client";
+
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  const calculateRotation = (factor: number) => {
+    const maxRotation = 20;
+    const xRotation =
+      (mousePosition.x / window.innerWidth - 0.5) * maxRotation * factor;
+    const yRotation =
+      (mousePosition.y / window.innerHeight - 0.5) * maxRotation * factor;
+    return Math.sqrt(xRotation * xRotation + yRotation * yRotation);
+  };
+
+  const armRotation = calculateRotation(2);
+  const bookRotation = calculateRotation(0.6);
+  const headRotation = calculateRotation(0.4);
+
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-gradient-to-b from-red-600 to-orange-600">
+      <div className="flex flex-col gap-8 items-center sm:items-start relative w-1/2 h-full">
+        <h1>Puppet of Tradition</h1>
+        <p>Move your mouse around the screen to see the puppet dance.</p>
+      </div>
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start relative w-full h-full">
+        <Image
+          className="dark:invert absolute top-0 left-0 mix-blend-multiply"
+          src="/pieces_shadows.png"
+          alt="Shadows"
+          width={500}
+          height={500}
+          priority
+          style={{ objectFit: "contain" }}
+        />
+        {/* <div className="absolute top-0 left-0 w-full h-full bg-red-800 mix-blend-multiply"></div> */}
+        <Image
+          className="dark:invert absolute top-0 left-0"
+          src="/pieces_2_body.png"
+          alt="Dickens Torso"
+          width={500}
+          height={500}
+          priority
+          style={{ objectFit: "contain" }}
+        />
+        <Image
+          className="dark:invert absolute top-0 left-0"
+          src="/pieces_desk.png"
+          alt="Desk"
+          width={500}
+          height={500}
+          priority
+          style={{ objectFit: "contain" }}
+        />
+        <Image
+          className="dark:invert absolute top-[97px] left-[290px] transition-transform duration-100 ease-linear"
+          src="/pieces_2_arm.png"
+          alt="Dickens Arm"
+          width={200}
+          height={200}
+          priority
+          style={{
+            objectFit: "contain",
+            transform: `rotate(${armRotation}deg)`,
+            transformOrigin: "10% 10%", // Adjusted to approximate shoulder joint
+          }}
+        />
+        <Image
+          className="dark:invert absolute top-[112px] left-[80px] transition-transform duration-100 ease-linear"
+          src="/pieces_2_book.png"
+          alt="Dickens Book Arm"
+          width={145}
+          height={150}
+          priority
+          style={{
+            objectFit: "contain",
+            transform: `rotate(${bookRotation}deg)`,
+            transformOrigin: "80% 20%",
+          }}
+        />
+        <Image
+          className="dark:invert absolute top-[-1px] left-[193px] transition-transform duration-100 ease-linear"
+          src="/pieces_2_head.png"
+          alt="Dickens Head"
+          width={96}
+          height={200}
+          priority
+          style={{
+            objectFit: "contain",
+            transform: `rotate(${headRotation}deg)`,
+            transformOrigin: "bottom center",
+          }}
+        />
+        <Image
+          className="dark:invert absolute top-[42px] left-[237px] transition-transform duration-100 ease-linear"
+          src="/pieces_2_lefteye.png"
+          alt="Left Eye"
+          width={10}
+          height={10}
+          priority
+          style={{
+            objectFit: "contain",
+            transform: `rotate(${headRotation}deg)`,
+            transformOrigin: "center",
+          }}
+        />
+        <Image
+          className="dark:invert absolute top-[42px] left-[258px] transition-transform duration-100 ease-linear"
+          src="/pieces_2_righteye.png"
+          alt="Right Eye"
+          width={10}
+          height={10}
+          priority
+          style={{
+            objectFit: "contain",
+            transform: `rotate(${headRotation}deg)`,
+            transformOrigin: "center",
+          }}
+        />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
